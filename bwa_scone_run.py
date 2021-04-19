@@ -12,7 +12,7 @@ export SCONE_FSPF_TAG=$(cat {workdir}/data-original/keytag | awk '{{print $9}}')
 
     for workeridx in range(nworker):
         script_template = f'''
-time for i in $(seq {workeridx+1} {nworker} 80); do echo "Processing [mem -o /workdir/P4_aln-$i.sam /workdir/split80/mref-$i.fa /workdir/split80/mreads-$i.fastq]" && docker run -v {hostdir}/volume:/data -v {hostdir}/data-original:/data-original -v {hostdir}:{containerdir} --env SCONE_VERSION=1 --env SCONE_MODE=HW --env SCONE_HEAP=4G --env SCONE_FSPF_KEY=$SCONE_FSPF_KEY --env SCONE_FSPF_TAG=$SCONE_FSPF_TAG --env SCONE_FSPF=/data/fspf.pb --device=/dev/isgx --entrypoint /root/bwa/bwa kevinwangfg/scone_bwa:v1.3 mem -o /workdir/{rundir}/files/P{nworker}_aln-$i.sam /workdir/{rundir}/files/mref-$i.fa /workdir/{rundir}/files/mreads-$i.fa; done
+time for i in $(seq {workeridx+1} {nworker} 80); do echo "Processing [mem -o /workdir/P{workeridx}_aln-$i.sam /workdir/split80/mref-$i.fa /workdir/split80/mreads-$i.fastq]" && docker run -v {hostdir}/volume:/data -v {hostdir}/data-original:/data-original -v {hostdir}:{containerdir} --env SCONE_VERSION=1 --env SCONE_MODE=HW --env SCONE_HEAP=4G --env SCONE_FSPF_KEY=$SCONE_FSPF_KEY --env SCONE_FSPF_TAG=$SCONE_FSPF_TAG --env SCONE_FSPF=/data/fspf.pb --device=/dev/isgx --entrypoint /root/bwa/bwa kevinwangfg/scone_bwa:v1.3 mem -o /workdir/{rundir}/files/P{nworker}_aln-$i.sam /workdir/{rundir}/files/mref-$i.fa /workdir/{rundir}/files/mreads-$i.fa; done
 '''
     #scripts = [script_template.format(workeridx=workeridx+1,nworker=nworker,hostdir=hostdir,containerdir=containerdir,rundir=rundir) for workeridx in range(nworker)]
     #
